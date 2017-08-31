@@ -1,0 +1,63 @@
+function email() {
+  
+  var ss = SpreadsheetApp.openById('1yt4Ry4Tt7SOyd7blU2AYqybNN3VbmhWqf3aYQUy3t-c');
+  var sheet = ss.setActiveSheet(ss.getSheetByName('DATA'));
+  var range = sheet.getRange(2,1,sheet.getMaxRows()-1,sheet.getMaxColumns());
+  var data = range.getValues();
+  
+  try {
+  
+  for (var i = 1; i < data.length; ++i) {
+    var row = data[i];
+    var status = row[10];
+    
+    if (status == "pending") {  // Prevents sending duplicates;
+      var name = row[1];
+      var email = row[2];
+      var answer1 = row[3];
+      var answer2 = row[4];
+      var answer3 = row[5];
+      var answer4 = row[6];
+      var answer5 = row[7];
+      var answer6 = row[8];
+      var answer7 = row[9];
+      
+      // Send the email with an HTML table in the body
+      
+      var subject = 'Your Planning Meetings eCourse Responses';
+      var message = 'You completed the course! Here are your answers:'
+      var table = '<table align="left"><tbody><tr><th scope="row" align="left">Gap Between Practice and Excellence</th><td>'+answer1+
+      '</td></tr><tr><th scope="row" align="left">Root Cause</th><td>'+answer2+
+      '</td></tr><tr><th scope="row" align="left">Purpose for Meeting</th><td>'+answer3+
+      '</td></tr><tr><th scope="row" align="left">Questions for Teachers</th><td>'+answer4+
+      '</td></tr><tr><th scope="row" align="left">Agenda</th><td>'+answer5+
+      '</td></tr><tr><th scope="row" align="left">Standards for Excellent Preparation</th><td>'+answer6+
+      '</td></tr><tr><th scope="row" align="left">Outcomes to Measure Change in Teacher Practice</th><td>'+answer7+
+      '</td></tr></tbody></table>'
+      
+      MailApp.sendEmail(email,
+                        subject,
+                        message,
+                        {
+                          htmlBody: table
+                        });
+      
+
+      /*
+      MailApp.sendEmail({
+        to: email,
+        subject: subject,
+        htmlBody: table,
+      });
+      */
+      
+      sheet.getRange(2+i, 11).setValue("email sent");
+    }
+  }
+    } catch (e) {
+      sheet.getRange(2+i, 11).setValue("error");
+      MailApp.sendEmail('brent.postlethweight@successacademies.org', 'Planning Meetings Email Error Report', e.message);
+      
+    }
+
+    }
